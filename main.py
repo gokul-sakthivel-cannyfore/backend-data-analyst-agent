@@ -5,6 +5,7 @@ from google import genai
 import os
 import requests
 from bs4 import BeautifulSoup
+import uvicorn
 
 app = FastAPI()
 app.add_middleware(
@@ -66,3 +67,6 @@ async def analyze_text(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # Render sets PORT, fallback = 8000 for local
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
