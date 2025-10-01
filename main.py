@@ -17,9 +17,9 @@ app.add_middleware(
 
 @app.post("/api/text/")
 async def analyze_text(
-    text: str = Form(""),                 # optional text
-    url: str = Form(""),                  # optional url
-    file: UploadFile = File(None)         # optional image
+    text: str = Form(""),                 
+    url: str = Form(""),                  
+    file: UploadFile = File(None)        
 ):
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
@@ -27,12 +27,10 @@ async def analyze_text(
 
     client = genai.Client(api_key=api_key)
 
-    # make sure at least one input exists
     if not text.strip() and not url.strip() and not file:
         raise HTTPException(status_code=400, detail="Provide text, url, or image")
 
     try:
-        # --- case: url provided ---
         if url.strip():
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -43,7 +41,6 @@ async def analyze_text(
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
             return {"content": text}
-        # --- case: text + image ---
         if file:
             image_bytes = await file.read()
             gen_response = client.models.generate_content(
